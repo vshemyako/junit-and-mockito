@@ -11,6 +11,12 @@ public class Money {
     private final String currency;
 
     public Money(int amount, String currency) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Provided amount could not be negative");
+        }
+        if (currency == null) {
+            throw new IllegalArgumentException("Each money instance has be associated with currency type");
+        }
         this.amount = amount;
         this.currency = currency;
     }
