@@ -10,5 +10,9 @@ repositories {
 }
 
 dependencies {
+    // the most popular framework for unit tests
     testCompile group: 'junit', name: 'junit', version: '4.11'
+    // provides additional functionality for parameterized tests
+    testCompile group: 'pl.pragmatists', name: 'JUnitParams', version: '1.0.4'
+
 }
