@@ -14,5 +14,6 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     // provides additional functionality for parameterized tests
     testCompile group: 'pl.pragmatists', name: 'JUnitParams', version: '1.0.4'
-
+    // helps in testing of java's collection framework
+    testCompile group: 'org.hamcrest', name: 'hamcrest-library', version: '1.3'
 }
