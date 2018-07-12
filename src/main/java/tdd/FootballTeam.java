@@ -1,16 +1,24 @@
 package tdd;
 
 /**
- * Created by Tom on 12.07.2018.
+ * Represent a single football team.
  */
 public class FootballTeam {
 
     private int gamesWon;
 
+    /**
+     * Football team constructor
+     *
+     * @param gamesWon - number of games a team has won
+     */
     public FootballTeam(int gamesWon) {
         this.gamesWon = gamesWon;
     }
 
+    /**
+     * @return number of games a football team has won
+     */
     public int getGamesWon() {
         return this.gamesWon;
     }
