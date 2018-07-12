@@ -3,10 +3,16 @@ package state;
 /**
  * Utility class to perform temperature conversions for different measurement systems
  */
-public class TemperatureConverter {
+public final class TemperatureConverter {
 
     private static final int VALUE_SHIFT = 32;
     private static final double VALUE_PROPORTION = 9.0 / 5.0;
+
+    /**
+     * Restrict creation of class instances
+     */
+    private TemperatureConverter() {
+    }
 
     /**
      * Converts Celcius measurements to Fahrenheit
