@@ -14,11 +14,20 @@ import static org.junit.Assert.assertEquals;
 public class FootballTeamTest {
 
     /**
-     * Prepares array of params for future tests
+     * Prepares array of params with valid games number
      */
-    public static Object[] getIntParams() {
+    private static Object[] getValidGamesWonNumber() {
         return new Object[]{
-                -10, 0, 10
+                0, 1, 10, 20
+        };
+    }
+
+    /**
+     * Prepares array of params with invalid games number
+     */
+    private static Object[] getInvalidGamesWonNumber() {
+        return new Object[]{
+                -10, -5, -1
         };
     }
 
@@ -27,9 +36,18 @@ public class FootballTeamTest {
      * Test verifies this behavior.
      */
     @Test
-    @Parameters(method = "getIntParams")
+    @Parameters(method = "getValidGamesWonNumber")
     public void constructorShouldSetGamesWon(int gamesWon) {
         FootballTeam footballTeam = new FootballTeam(gamesWon);
         assertEquals("Constructor doesn't set gamesWon number", gamesWon, footballTeam.getGamesWon());
+    }
+
+    /**
+     * Constructor should throw {@link IllegalArgumentException} if negative number of games won is passed.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    @Parameters(method = "getInvalidGamesWonNumber")
+    public void constructorShouldThrowExceptionOnNegativeGamesWon(int gamesWon) {
+        new FootballTeam(gamesWon);
     }
 }
