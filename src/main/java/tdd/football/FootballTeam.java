@@ -1,4 +1,4 @@
-package tdd;
+package tdd.football;
 
 /**
  * Represent a single football team.

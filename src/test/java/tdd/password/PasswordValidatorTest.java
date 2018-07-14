@@ -1,4 +1,4 @@
-package tdd;
+package tdd.password;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -9,13 +9,16 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
-import static tdd.PasswordValidationRules.MINIMAL_LENGTH;
+import static tdd.password.PasswordValidationRules.MINIMAL_LENGTH;
+import static tdd.password.PasswordValidationRules.UNDERSCORE;
 
 /**
  * Tests functionality of {@link PasswordValidator} class
  */
 @RunWith(JUnitParamsRunner.class)
 public class PasswordValidatorTest {
+
+    private static final String NON_UNDERSCORE_STRING = "qwerty";
 
     /**
      * Returns array of several passwords
@@ -96,5 +99,23 @@ public class PasswordValidatorTest {
     public void shouldReturnTrueOnPasswordLengthGreaterThanMinimal(String validLengthPassword) {
         PasswordValidator passwordValidator = new PasswordValidator(validLengthPassword);
         Assert.assertTrue("Length validation is wrong", passwordValidator.isLengthValid());
+    }
+
+    /**
+     * Verifies that validator return false in case password doesn't contain {@link PasswordValidationRules#UNDERSCORE}
+     */
+    @Test
+    public void shouldReturnFalseIfPasswordDoesNotContainUnderscore() {
+        PasswordValidator passwordValidator = new PasswordValidator(NON_UNDERSCORE_STRING);
+        Assert.assertFalse("Underscore validation is wrong", passwordValidator.containsUnderscore());
+    }
+
+    /**
+     * Verifies that validator returns true in case password contains {@link PasswordValidationRules#UNDERSCORE}
+     */
+    @Test
+    public void shouldReturnTrueIfPasswordContainUnderscore() {
+        PasswordValidator passwordValidator = new PasswordValidator(UNDERSCORE);
+        Assert.assertTrue("Underscore validation is wrong", passwordValidator.containsUnderscore());
     }
 }

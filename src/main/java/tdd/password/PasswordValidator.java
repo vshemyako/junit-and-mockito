@@ -1,6 +1,7 @@
-package tdd;
+package tdd.password;
 
-import static tdd.PasswordValidationRules.MINIMAL_LENGTH;
+import static tdd.password.PasswordValidationRules.MINIMAL_LENGTH;
+import static tdd.password.PasswordValidationRules.UNDERSCORE;
 
 /**
  * Validates passwords strength
@@ -42,5 +43,12 @@ public class PasswordValidator {
      */
     protected boolean isLengthValid() {
         return this.password.length() >= MINIMAL_LENGTH;
+    }
+
+    /**
+     * Returns true in case password contains {@link PasswordValidationRules#UNDERSCORE}
+     */
+    protected boolean containsUnderscore() {
+        return this.password.contains(UNDERSCORE);
     }
 }

@@ -1,10 +1,11 @@
-package tdd;
+package tdd.football;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import tdd.football.FootballTeam;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
