@@ -6,6 +6,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
+
+import static tdd.PasswordValidationRules.MINIMAL_LENGTH;
+
 /**
  * Tests functionality of {@link PasswordValidator} class
  */
@@ -13,7 +18,7 @@ import org.junit.runner.RunWith;
 public class PasswordValidatorTest {
 
     /**
-     * Return array of several passwords
+     * Returns array of several passwords
      */
     private static Object[] getRandomPasswords() {
         return new Object[]{
@@ -22,11 +27,35 @@ public class PasswordValidatorTest {
     }
 
     /**
-     * Return array of blank passwords
+     * Returns array of blank passwords
      */
     private static Object[] getBlankPasswords() {
         return new Object[]{
                 null, "", "  "
+        };
+    }
+
+    /**
+     * Returns array of passwords of invalid length
+     */
+    private static Object[] getInvalidLengthPasswords() {
+        ThreadLocalRandom randomizer = ThreadLocalRandom.current();
+        return new Object[]{
+                IntStream.range(0, randomizer.nextInt(1, MINIMAL_LENGTH))
+                        .mapToObj(String::valueOf)
+                        .reduce("", (first, second) -> first + second)
+        };
+    }
+
+    /**
+     * Returns array of passwords of valid length
+     */
+    private static Object[] getValidLengthPasswords() {
+        ThreadLocalRandom randomizer = ThreadLocalRandom.current();
+        return new Object[]{
+                IntStream.rangeClosed(0, randomizer.nextInt(MINIMAL_LENGTH, MINIMAL_LENGTH * 2))
+                        .mapToObj(String::valueOf)
+                        .reduce("", (first, second) -> first + second)
         };
     }
 
@@ -53,8 +82,9 @@ public class PasswordValidatorTest {
      * Verifies that validator returns false in case password is below minimal length restriction
      */
     @Test
-    public void shouldReturnFalseOnPasswordLengthLessThanMinimal() {
-        PasswordValidator passwordValidator = new PasswordValidator("1234");
+    @Parameters(method = "getInvalidLengthPasswords")
+    public void shouldReturnFalseOnPasswordLengthLessThanMinimal(String invalidLengthPassword) {
+        PasswordValidator passwordValidator = new PasswordValidator(invalidLengthPassword);
         Assert.assertFalse("Length validation is wrong", passwordValidator.isLengthValid());
     }
 
@@ -62,8 +92,9 @@ public class PasswordValidatorTest {
      * Verifies that validator returns true in case password is of valid length
      */
     @Test
-    public void shouldReturnTrueOnPasswordLengthGreaterThanMinimal() {
-        PasswordValidator passwordValidator = new PasswordValidator("12345");
+    @Parameters(method = "getValidLengthPasswords")
+    public void shouldReturnTrueOnPasswordLengthGreaterThanMinimal(String validLengthPassword) {
+        PasswordValidator passwordValidator = new PasswordValidator(validLengthPassword);
         Assert.assertTrue("Length validation is wrong", passwordValidator.isLengthValid());
     }
 }
