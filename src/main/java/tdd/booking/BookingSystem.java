@@ -13,6 +13,13 @@ public class BookingSystem {
      * @param bookingTarget - subject of booking system
      */
     public BookingSystem(String bookingTarget) {
+        if (bookingTarget == null) {
+            throw new IllegalArgumentException("Booking target must not be null");
+        }
+        if (bookingTarget.trim().isEmpty()) {
+            throw new IllegalArgumentException("Booking target must not be blank");
+        }
+
         this.bookingTarget = bookingTarget;
     }
 
