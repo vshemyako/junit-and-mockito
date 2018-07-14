@@ -12,6 +12,7 @@ public class DigitExtractor {
      * Regex pattern to extract exactly three digits groups
      */
     private static final Pattern THREE_DIGIT_REGEX_PATTERN = Pattern.compile("(\\d{3})");
+    private static final String COMMA_WHITESPACE_DELIMITER = ", ";
 
     /**
      * Extract three-digit groups from specified String, concatenating them with comma
@@ -20,11 +21,14 @@ public class DigitExtractor {
      * @return extracted three-digit groups concatenated with comma
      */
     public static String extractByThree(String randomString) {
-        String extractedDigits = null;
+        StringBuilder extractedDigits = new StringBuilder();
         Matcher matcher = THREE_DIGIT_REGEX_PATTERN.matcher(randomString);
-        if (matcher.find()) {
-            extractedDigits = matcher.group(0);
+        while (matcher.find()) {
+            if (extractedDigits.length() > 0) {
+                extractedDigits.append(COMMA_WHITESPACE_DELIMITER);
+            }
+            extractedDigits.append(matcher.group(0));
         }
-        return extractedDigits;
+        return extractedDigits.toString();
     }
 }

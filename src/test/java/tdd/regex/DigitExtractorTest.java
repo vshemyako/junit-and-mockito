@@ -22,6 +22,13 @@ public class DigitExtractorTest {
         };
     }
 
+    private static Object[] getThreeDigitsExtractorPairs() {
+        return new Object[][]{
+                {"345, 678", "cdefg 345 12bbb33 678tt"},
+                {"123, 234, 336", "123, 33 } as234... 336asd"}
+        };
+    }
+
     /**
      * Verifies that {@link DigitExtractor} extracts exactly the same three digits which were passed for extraction
      */
@@ -39,5 +46,19 @@ public class DigitExtractorTest {
     public void shouldExtractThreeEmbeddedDigitsFromAString(String embeddedDigitGroup) {
         String extractedDigits = DigitExtractor.extractByThree(embeddedDigitGroup);
         Assert.assertEquals(THREE_DIGITS, extractedDigits);
+    }
+
+    /**
+     * Verifies that any string passed as argument will be converted to comma-whitespace separated list
+     * of three-digit pairs
+     *
+     * @param expectedValue - value expected to convert to
+     * @param source        - source string to test
+     */
+    @Test
+    @Parameters(method = "getThreeDigitsExtractorPairs")
+    public void shouldExtractAllThreeDigitsSeparatingThemWithComma(String expectedValue, String source) {
+        String extractedDigits = DigitExtractor.extractByThree(source);
+        Assert.assertEquals(expectedValue, extractedDigits);
     }
 }
