@@ -48,4 +48,22 @@ public class PasswordValidatorTest {
     public void constructorShouldThrowExceptionOnEmptyPassword(String password) {
         new PasswordValidator(password);
     }
+
+    /**
+     * Verifies that validator returns false in case password is below minimal length restriction
+     */
+    @Test
+    public void shouldReturnFalseOnPasswordLengthLessThanMinimal() {
+        PasswordValidator passwordValidator = new PasswordValidator("1234");
+        Assert.assertFalse("Length validation is wrong", passwordValidator.isLengthValid());
+    }
+
+    /**
+     * Verifies that validator returns true in case password is of valid length
+     */
+    @Test
+    public void shouldReturnTrueOnPasswordLengthGreaterThanMinimal() {
+        PasswordValidator passwordValidator = new PasswordValidator("12345");
+        Assert.assertTrue("Length validation is wrong", passwordValidator.isLengthValid());
+    }
 }

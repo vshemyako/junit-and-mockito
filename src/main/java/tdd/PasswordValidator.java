@@ -1,5 +1,7 @@
 package tdd;
 
+import static tdd.PasswordValidationRules.MINIMAL_LENGTH;
+
 /**
  * Validates passwords strength
  */
@@ -33,5 +35,12 @@ public class PasswordValidator {
      */
     public String getPassword() {
         return this.password;
+    }
+
+    /**
+     * Returns true in case password length is greater than minimal
+     */
+    protected boolean isLengthValid() {
+        return this.password.length() >= MINIMAL_LENGTH;
     }
 }
