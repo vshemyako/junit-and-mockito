@@ -16,6 +16,13 @@ public class PasswordValidator {
      * @param password to validate
      */
     public PasswordValidator(String password) {
+        if (password == null) {
+            throw new IllegalArgumentException("Password to validate must not be null");
+        }
+        if (password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password to validate must not be empty");
+        }
+
         this.password = password;
     }
 
