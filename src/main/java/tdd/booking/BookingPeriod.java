@@ -23,6 +23,14 @@ public class BookingPeriod {
             throw new IllegalArgumentException("To point of time must not be null");
         }
 
+        // verifies that passed arguments are regular whole hours
+        if (from.getMinute() > 0 || from.getSecond() > 0 || from.getNano() > 0) {
+            throw new IllegalArgumentException("From point of time is not a regular whole hour");
+        }
+        if (to.getMinute() > 0 || to.getSecond() > 0 || to.getNano() > 0) {
+            throw new IllegalArgumentException("To point of time is not a regular whole hour");
+        }
+
         this.from = from;
         this.to = to;
     }
