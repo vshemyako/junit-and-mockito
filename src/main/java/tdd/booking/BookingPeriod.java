@@ -16,6 +16,13 @@ public class BookingPeriod {
      * @param to   - ending period of time
      */
     public BookingPeriod(LocalTime from, LocalTime to) {
+        if (from == null) {
+            throw new IllegalArgumentException("From point of time must not be null");
+        }
+        if (to == null) {
+            throw new IllegalArgumentException("To point of time must not be null");
+        }
+
         this.from = from;
         this.to = to;
     }
