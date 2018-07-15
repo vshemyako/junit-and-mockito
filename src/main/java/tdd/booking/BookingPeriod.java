@@ -48,4 +48,34 @@ public class BookingPeriod {
     public LocalTime getTo() {
         return this.to;
     }
+
+    /**
+     * Calculates hashCode value of this object
+     *
+     * @return calculated value
+     */
+    @Override
+    public int hashCode() {
+        return this.getFrom().hashCode() + this.getTo().hashCode();
+    }
+
+    /**
+     * Compares this object with another
+     *
+     * @param another - object to compare for equality with this object
+     * @return true in case objects are the same
+     */
+    @Override
+    public boolean equals(Object another) {
+        // cheap comparison
+        if (this == another) {
+            return true;
+        }
+        if ((another instanceof BookingPeriod)) {
+            BookingPeriod anotherPeriod = (BookingPeriod) another;
+            return this.getFrom().equals(anotherPeriod.getFrom())
+                    && this.getTo().equals(anotherPeriod.getTo());
+        }
+        return false;
+    }
 }

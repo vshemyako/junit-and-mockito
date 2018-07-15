@@ -77,4 +77,28 @@ public class BookingPeriodTest {
     public void constructorShouldThrowExceptionOnNonWholeHours(LocalTime from, LocalTime to) {
         new BookingPeriod(from, to);
     }
+
+    /**
+     * Verifies that successive invocations of {@link Object#hashCode()} method on the same instance
+     * will return the same value
+     */
+    @Test
+    @Parameters(method = "getFromToPeriods")
+    public void successiveInvocationOfHashCodeShouldReturnTheSameValue(LocalTime from, LocalTime to) {
+        BookingPeriod bookingPeriod = new BookingPeriod(from, to);
+        int firstValueInvocation = bookingPeriod.hashCode();
+        int secondValueInvocation = bookingPeriod.hashCode();
+        Assert.assertEquals(firstValueInvocation, secondValueInvocation);
+    }
+
+    /**
+     * Verifies that equals method return true in case equal objects are compared
+     */
+    @Test
+    @Parameters(method = "getFromToPeriods")
+    public void equalsShouldReturnTrueForSameObjects(LocalTime from, LocalTime to) {
+        BookingPeriod period = new BookingPeriod(from, to);
+        BookingPeriod samePeriod = new BookingPeriod(from, to);
+        Assert.assertTrue("Wrong implementation of equals methods", period.equals(samePeriod));
+    }
 }
