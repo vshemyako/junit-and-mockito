@@ -28,6 +28,15 @@ public class BookingSystemTest {
         };
     }
 
+    private static Object[][] getOverlappingPeriods() {
+        return new Object[][]{
+                {
+                        new BookingPeriod(LocalTime.of(1, 0), LocalTime.of(2, 0)),
+                        new BookingPeriod(LocalTime.of(1, 0), LocalTime.of(3, 0))
+                }
+        };
+    }
+
     private BookingSystem bookingSystem;
 
     /**
@@ -75,6 +84,17 @@ public class BookingSystemTest {
     public void shouldForbidBookingTheSamePeriodTwice() {
         bookingSystem.bookPeriod(VALID_PERIOD);
         boolean booked = bookingSystem.bookPeriod(VALID_PERIOD);
+        Assert.assertFalse(booked);
+    }
+
+    /**
+     * Verifies that overlapping period could not be booked
+     */
+    @Test
+    @Parameters(method = "getOverlappingPeriods")
+    public void shouldForbidBookingOverlappingPeriods(BookingPeriod bookingPeriod, BookingPeriod overlappingPeriod) {
+        bookingSystem.bookPeriod(bookingPeriod);
+        boolean booked = bookingSystem.bookPeriod(overlappingPeriod);
         Assert.assertFalse(booked);
     }
 }
