@@ -59,6 +59,9 @@ public class BookingSystem {
         for(BookingPeriod wasBooked : bookedPeriods) {
             isOverlapping = toBook.getFrom().isBefore(wasBooked.getTo())
                     && toBook.getTo().isAfter(wasBooked.getFrom());
+            if(isOverlapping) {
+                break;
+            }
         }
         return isOverlapping;
     }
