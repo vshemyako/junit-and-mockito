@@ -24,6 +24,14 @@ public class CarTest {
     }
 
     /**
+     * Dumb test actually =)
+     */
+    @Test
+    public void mockedObjectShouldBeCar() {
+        Assert.assertTrue(mockedCar instanceof Car);
+    }
+
+    /**
      * Verifies that default boolean value provided by Mockito is {@code false}
      */
     @Test
@@ -57,5 +65,25 @@ public class CarTest {
                 .thenReturn(true);
 
         Assert.assertTrue(mockedCar.needsFuel());
+    }
+
+    /**
+     * Verifies that method behaviour can be changed to throw desired exceptions
+     */
+    @Test(expected = IllegalStateException.class)
+    public void shouldThrowExceptionOnGetName() {
+        Mockito.when(mockedCar.getName())
+                .thenThrow(new IllegalStateException());
+
+        mockedCar.getName();
+    }
+
+    /**
+     * Verifies that methods of a mocked object was called
+     */
+    @Test
+    public void shouldVerifyNeedsFuelWasCalled() {
+        mockedCar.needsFuel();
+        Mockito.verify(mockedCar).needsFuel();
     }
 }
