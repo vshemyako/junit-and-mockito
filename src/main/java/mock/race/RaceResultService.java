@@ -1,23 +1,26 @@
 package mock.race;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Service for sending race results messages to subscribers
  */
 public class RaceResultService {
 
-    private Client client;
+    private Set<Client> clients = new HashSet<>();
 
     /**
      * Adds subscriber for later notification
      */
     public void addSubscriber(Client client) {
-        this.client = client;
+        clients.add(client);
     }
 
     /**
      * Sends {@code message} to subscribed client
      */
     public void send(Message message) {
-        client.receive(message);
+        clients.forEach(client -> client.receive(message));
     }
 }
