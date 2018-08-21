@@ -1,33 +1,44 @@
 package mock.race;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Service for sending race results messages to subscribers
  */
 public class RaceResultService {
 
-    private Set<Client> clients = new HashSet<>();
+    private Map<Category, Set<Client>> categoryToClients = new HashMap<>();
 
     /**
-     * Adds subscriber for later notification
+     * Adds subscriber for chosen {@code category} for later notification
      */
-    public void addSubscriber(Client client) {
+    public void addSubscriber(Category category, Client client) {
+        Function<Category, Set<Client>> mappingFunction = chosenCategory -> new HashSet<>();
+        Set<Client> clients = categoryToClients.computeIfAbsent(category, mappingFunction);
         clients.add(client);
     }
 
     /**
-     * Sends {@code message} to subscribed client
+     * Sends {@code message} to subscribed clients of chosen {@code category}
      */
-    public void send(Message message) {
-        clients.forEach(client -> client.receive(message));
+    public void send(Category category, Message message) {
+        Set<Client> clients = categoryToClients.get(category);
+        if (clients != null) {
+            clients.forEach(client -> client.receive(message));
+        }
     }
 
     /**
-     * Removes {@code client} from {@code clients} list
+     * Removes {@code client} from {@code clients} list of chosen {@code category}
      */
-    public void removeSubscriber(Client client) {
-        clients.remove(client);
+    public void removeSubscriber(Category category, Client client) {
+        Set<Client> clients = categoryToClients.get(category);
+        if (clients != null) {
+            clients.remove(client);
+        }
     }
 }

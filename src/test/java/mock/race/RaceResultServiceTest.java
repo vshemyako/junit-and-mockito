@@ -13,6 +13,8 @@ public class RaceResultServiceTest {
     private Client clientA;
     private Client clientB;
     private Message message;
+    private Category categoryA;
+    private Category categoryB;
 
     /**
      * Reinitializes fields common by test methods
@@ -22,7 +24,9 @@ public class RaceResultServiceTest {
         this.raceResultService = new RaceResultService();
         this.clientA = Mockito.mock(Client.class, "clientA");
         this.clientB = Mockito.mock(Client.class, "clientB");
-        this.message = Mockito.mock(Message.class);
+        this.message = Mockito.mock(Message.class, "message");
+        this.categoryA = Mockito.mock(Category.class, "categoryA");
+        this.categoryB = Mockito.mock(Category.class, "categoryB");
     }
 
     /**
@@ -31,7 +35,7 @@ public class RaceResultServiceTest {
     @Test
     public void notSubscribedClientsShouldNotReceiveMessage() {
         // core functionality
-        raceResultService.send(message);
+        raceResultService.send(categoryA, message);
 
         // verify interactions
         Mockito.verify(clientA, Mockito.never()).receive(message);
@@ -43,8 +47,8 @@ public class RaceResultServiceTest {
     @Test
     public void subscribedClientShouldReceiveMessage() {
         // core functionality
-        raceResultService.addSubscriber(clientA);
-        raceResultService.send(message);
+        raceResultService.addSubscriber(categoryA, clientA);
+        raceResultService.send(categoryA, message);
 
         // verify interactions
         Mockito.verify(clientA).receive(message);
@@ -56,9 +60,9 @@ public class RaceResultServiceTest {
     @Test
     public void allSubscribedClientsShouldReceiveMessages() {
         // core functionality
-        raceResultService.addSubscriber(clientA);
-        raceResultService.addSubscriber(clientB);
-        raceResultService.send(message);
+        raceResultService.addSubscriber(categoryA, clientA);
+        raceResultService.addSubscriber(categoryA, clientB);
+        raceResultService.send(categoryA, message);
 
         // verify interactions
         Mockito.verify(clientA).receive(message);
@@ -71,9 +75,9 @@ public class RaceResultServiceTest {
     @Test
     public void severalSubscribesOfSameClientShouldResultInOneReceivedMessage() {
         // core functionality
-        raceResultService.addSubscriber(clientA);
-        raceResultService.addSubscriber(clientA);
-        raceResultService.send(message);
+        raceResultService.addSubscriber(categoryA, clientA);
+        raceResultService.addSubscriber(categoryA, clientA);
+        raceResultService.send(categoryA, message);
 
         // verify interactions (default
         Mockito.verify(clientA).receive(message);
@@ -85,9 +89,9 @@ public class RaceResultServiceTest {
     @Test
     public void removedSubscribedShouldStopReceiveMessages() {
         // core functionality
-        raceResultService.addSubscriber(clientA);
-        raceResultService.removeSubscriber(clientA);
-        raceResultService.send(message);
+        raceResultService.addSubscriber(categoryA, clientA);
+        raceResultService.removeSubscriber(categoryA, clientA);
+        raceResultService.send(categoryA, message);
 
         // verify interactions
         Mockito.verify(clientA, Mockito.never()).receive(message);
