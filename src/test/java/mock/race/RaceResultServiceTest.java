@@ -78,4 +78,18 @@ public class RaceResultServiceTest {
         // verify interactions (default
         Mockito.verify(clientA).receive(message);
     }
+
+    /**
+     * Verifies that once removed client should not receive any messages
+     */
+    @Test
+    public void removedSubscribedShouldStopReceiveMessages() {
+        // core functionality
+        raceResultService.addSubscriber(clientA);
+        raceResultService.removeSubscriber(clientA);
+        raceResultService.send(message);
+
+        // verify interactions
+        Mockito.verify(clientA, Mockito.never()).receive(message);
+    }
 }

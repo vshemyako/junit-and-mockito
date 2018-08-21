@@ -23,4 +23,11 @@ public class RaceResultService {
     public void send(Message message) {
         clients.forEach(client -> client.receive(message));
     }
+
+    /**
+     * Removes {@code client} from {@code clients} list
+     */
+    public void removeSubscriber(Client client) {
+        clients.remove(client);
+    }
 }
