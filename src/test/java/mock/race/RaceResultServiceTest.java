@@ -12,7 +12,8 @@ public class RaceResultServiceTest {
     private RaceResultService raceResultService;
     private Client clientA;
     private Client clientB;
-    private Message message;
+    private Message messageA;
+    private Message messageB;
     private Category categoryA;
     private Category categoryB;
 
@@ -24,7 +25,8 @@ public class RaceResultServiceTest {
         this.raceResultService = new RaceResultService();
         this.clientA = Mockito.mock(Client.class, "clientA");
         this.clientB = Mockito.mock(Client.class, "clientB");
-        this.message = Mockito.mock(Message.class, "message");
+        this.messageA = Mockito.mock(Message.class, "messageA");
+        this.messageB = Mockito.mock(Message.class, "messageB");
         this.categoryA = Mockito.mock(Category.class, "categoryA");
         this.categoryB = Mockito.mock(Category.class, "categoryB");
     }
@@ -35,10 +37,10 @@ public class RaceResultServiceTest {
     @Test
     public void notSubscribedClientsShouldNotReceiveMessage() {
         // core functionality
-        raceResultService.send(categoryA, message);
+        raceResultService.send(categoryA, messageA);
 
         // verify interactions
-        Mockito.verify(clientA, Mockito.never()).receive(message);
+        Mockito.verify(clientA, Mockito.never()).receive(messageA);
     }
 
     /**
@@ -48,10 +50,10 @@ public class RaceResultServiceTest {
     public void subscribedClientShouldReceiveMessage() {
         // core functionality
         raceResultService.addSubscriber(categoryA, clientA);
-        raceResultService.send(categoryA, message);
+        raceResultService.send(categoryA, messageA);
 
         // verify interactions
-        Mockito.verify(clientA).receive(message);
+        Mockito.verify(clientA).receive(messageA);
     }
 
     /**
@@ -62,11 +64,11 @@ public class RaceResultServiceTest {
         // core functionality
         raceResultService.addSubscriber(categoryA, clientA);
         raceResultService.addSubscriber(categoryA, clientB);
-        raceResultService.send(categoryA, message);
+        raceResultService.send(categoryA, messageA);
 
         // verify interactions
-        Mockito.verify(clientA).receive(message);
-        Mockito.verify(clientB).receive(message);
+        Mockito.verify(clientA).receive(messageA);
+        Mockito.verify(clientB).receive(messageA);
     }
 
     /**
@@ -77,23 +79,66 @@ public class RaceResultServiceTest {
         // core functionality
         raceResultService.addSubscriber(categoryA, clientA);
         raceResultService.addSubscriber(categoryA, clientA);
-        raceResultService.send(categoryA, message);
+        raceResultService.send(categoryA, messageA);
 
-        // verify interactions (default
-        Mockito.verify(clientA).receive(message);
+        // verify interactions
+        Mockito.verify(clientA).receive(messageA);
     }
 
     /**
      * Verifies that once removed client should not receive any messages
      */
     @Test
-    public void removedSubscribedShouldStopReceiveMessages() {
+    public void removedSubscriberShouldStopReceiveMessages() {
         // core functionality
         raceResultService.addSubscriber(categoryA, clientA);
         raceResultService.removeSubscriber(categoryA, clientA);
-        raceResultService.send(categoryA, message);
+        raceResultService.send(categoryA, messageA);
 
         // verify interactions
-        Mockito.verify(clientA, Mockito.never()).receive(message);
+        Mockito.verify(clientA, Mockito.never()).receive(messageA);
+    }
+
+    /**
+     * Verifies that subscriber do not receive messages from categories he isn't
+     * subscribed for
+     */
+    @Test
+    public void subscribedClientShouldReceiveOnlyMessageForChosenCategory() {
+        raceResultService.addSubscriber(categoryA, clientA);
+        raceResultService.send(categoryB, messageA);
+
+        Mockito.verify(clientA, Mockito.never()).receive(messageA);
+    }
+
+    /**
+     * Verifies that subscriber will receive messages from different categories in case
+     * he has chosen to receive them
+     */
+    @Test
+    public void subscribedClientShouldReceiveMessagesFromSeveralSubscribedCategories() {
+        raceResultService.addSubscriber(categoryA, clientA);
+        raceResultService.addSubscriber(categoryB, clientA);
+        raceResultService.send(categoryA, messageA);
+        raceResultService.send(categoryB, messageB);
+
+        Mockito.verify(clientA).receive(messageA);
+        Mockito.verify(clientA).receive(messageB);
+    }
+
+    /**
+     * Verifies that several subscribers receive only chosen messages
+     */
+    @Test
+    public void severalSubscribersReceiveMessageFromChosenCategories() {
+        raceResultService.addSubscriber(categoryA, clientA);
+        raceResultService.addSubscriber(categoryA, clientB);
+        raceResultService.addSubscriber(categoryB, clientB);
+        raceResultService.send(categoryA, messageA);
+        raceResultService.send(categoryA, messageB);
+
+        Mockito.verify(clientA).receive(messageA);
+        Mockito.verify(clientB).receive(messageA);
+        Mockito.verify(clientB).receive(messageB);
     }
 }
