@@ -9,6 +9,7 @@ import org.mockito.Mockito;
  */
 public class RaceResultServiceTest {
 
+    private Logger logger;
     private RaceResultService raceResultService;
     private Client clientA;
     private Client clientB;
@@ -22,7 +23,9 @@ public class RaceResultServiceTest {
      */
     @Before
     public void setUp() {
-        this.raceResultService = new RaceResultService();
+        this.logger = Mockito.mock(Logger.class);
+        this.raceResultService = new RaceResultService(logger);
+
         this.clientA = Mockito.mock(Client.class, "clientA");
         this.clientB = Mockito.mock(Client.class, "clientB");
         this.messageA = Mockito.mock(Message.class, "messageA");
@@ -41,6 +44,7 @@ public class RaceResultServiceTest {
 
         // verify interactions
         Mockito.verify(clientA, Mockito.never()).receive(messageA);
+        Mockito.verify(logger, Mockito.never()).log(messageA);
     }
 
     /**
@@ -54,6 +58,7 @@ public class RaceResultServiceTest {
 
         // verify interactions
         Mockito.verify(clientA).receive(messageA);
+        Mockito.verify(logger).log(messageA);
     }
 
     /**
@@ -69,6 +74,7 @@ public class RaceResultServiceTest {
         // verify interactions
         Mockito.verify(clientA).receive(messageA);
         Mockito.verify(clientB).receive(messageA);
+        Mockito.verify(logger, Mockito.times(2)).log(messageA);
     }
 
     /**
@@ -83,6 +89,7 @@ public class RaceResultServiceTest {
 
         // verify interactions
         Mockito.verify(clientA).receive(messageA);
+        Mockito.verify(logger).log(messageA);
     }
 
     /**
@@ -97,6 +104,7 @@ public class RaceResultServiceTest {
 
         // verify interactions
         Mockito.verify(clientA, Mockito.never()).receive(messageA);
+        Mockito.verify(logger, Mockito.never()).log(messageA);
     }
 
     /**
@@ -109,6 +117,7 @@ public class RaceResultServiceTest {
         raceResultService.send(categoryB, messageA);
 
         Mockito.verify(clientA, Mockito.never()).receive(messageA);
+        Mockito.verify(logger, Mockito.never()).log(messageA);
     }
 
     /**
@@ -124,6 +133,8 @@ public class RaceResultServiceTest {
 
         Mockito.verify(clientA).receive(messageA);
         Mockito.verify(clientA).receive(messageB);
+        Mockito.verify(logger).log(messageA);
+        Mockito.verify(logger).log(messageB);
     }
 
     /**
@@ -135,10 +146,12 @@ public class RaceResultServiceTest {
         raceResultService.addSubscriber(categoryA, clientB);
         raceResultService.addSubscriber(categoryB, clientB);
         raceResultService.send(categoryA, messageA);
-        raceResultService.send(categoryA, messageB);
+        raceResultService.send(categoryB, messageB);
 
         Mockito.verify(clientA).receive(messageA);
         Mockito.verify(clientB).receive(messageA);
         Mockito.verify(clientB).receive(messageB);
+        Mockito.verify(logger, Mockito.times(2)).log(messageA);
+        Mockito.verify(logger).log(messageB);
     }
 }

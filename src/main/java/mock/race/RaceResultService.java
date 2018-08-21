@@ -11,7 +11,13 @@ import java.util.function.Function;
  */
 public class RaceResultService {
 
-    private Map<Category, Set<Client>> categoryToClients = new HashMap<>();
+    private final Logger logger;
+    private final Map<Category, Set<Client>> categoryToClients;
+
+    public RaceResultService(Logger logger) {
+        this.logger = logger;
+        this.categoryToClients = new HashMap<>();
+    }
 
     /**
      * Adds subscriber for chosen {@code category} for later notification
@@ -28,7 +34,10 @@ public class RaceResultService {
     public void send(Category category, Message message) {
         Set<Client> clients = categoryToClients.get(category);
         if (clients != null) {
-            clients.forEach(client -> client.receive(message));
+            clients.forEach(client -> {
+                client.receive(message);
+                logger.log(message);
+            });
         }
     }
 
