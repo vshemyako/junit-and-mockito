@@ -46,8 +46,12 @@ public class RaceResultService {
      */
     public void removeSubscriber(Category category, Client client) {
         Set<Client> clients = categoryToClients.get(category);
-        if (clients != null) {
-            clients.remove(client);
+        if (clients == null) {
+            throw new IllegalStateException("Can't unsubscribe non-subscribed client");
+        }
+        boolean unsubscribed = clients.remove(client);
+        if(!unsubscribed) {
+            throw new IllegalStateException("Failed to unsubscribe client");
         }
     }
 }

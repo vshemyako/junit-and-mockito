@@ -199,4 +199,12 @@ public class RaceResultServiceTest {
         Mockito.verify(logger, Mockito.times(2 * messagesNumber)).log(messageA);
         Mockito.verify(logger, Mockito.times(messagesNumber)).log(messageB);
     }
+
+    /**
+     * Verifies that exception is thrown in case non-subscribed client tries to unsubscribe
+     */
+    @Test(expected = IllegalStateException.class)
+    public void nonSubscribedClientShouldNotBeAbleToUnsubscribe() {
+        raceResultService.removeSubscriber(categoryA, clientA);
+    }
 }
