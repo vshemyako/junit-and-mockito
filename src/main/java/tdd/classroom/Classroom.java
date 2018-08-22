@@ -1,4 +1,4 @@
 package tdd.classroom;
 
-public class Classroom {
+public interface Classroom {
 }
