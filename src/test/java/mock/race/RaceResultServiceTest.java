@@ -1,13 +1,30 @@
 package mock.race;
 
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Tests functionality of {@link RaceResultService} class
  */
+@RunWith(JUnitParamsRunner.class)
 public class RaceResultServiceTest {
+
+    /**
+     * Generates several random integral numbers to test multiple methods invocation result
+     */
+    private static Object[] getCountsOfMethodInvocation() {
+        return new Object[]{
+                ThreadLocalRandom.current().nextInt(100),
+                ThreadLocalRandom.current().nextInt(50),
+                ThreadLocalRandom.current().nextInt(25)
+        };
+    }
 
     private Logger logger;
     private RaceResultService raceResultService;
@@ -51,56 +68,72 @@ public class RaceResultServiceTest {
      * Verifies that subscribed client will receive message from a {@link RaceResultService}
      */
     @Test
-    public void subscribedClientShouldReceiveMessage() {
+    @Parameters(method = "getCountsOfMethodInvocation")
+    public void subscribedClientShouldReceiveMessage(int messagesNumber) {
         // core functionality
         raceResultService.addSubscriber(categoryA, clientA);
-        raceResultService.send(categoryA, messageA);
+
+        for (int loopIndex = messagesNumber; loopIndex > 0; loopIndex--) {
+            raceResultService.send(categoryA, messageA);
+        }
 
         // verify interactions
-        Mockito.verify(clientA).receive(messageA);
-        Mockito.verify(logger).log(messageA);
+        Mockito.verify(clientA, Mockito.times(messagesNumber)).receive(messageA);
+        Mockito.verify(logger, Mockito.times(messagesNumber)).log(messageA);
     }
 
     /**
      * Verifies that all subscribed clients receive message from a {@link RaceResultService}
      */
     @Test
-    public void allSubscribedClientsShouldReceiveMessages() {
+    @Parameters(method = "getCountsOfMethodInvocation")
+    public void allSubscribedClientsShouldReceiveMessages(int messagesNumber) {
         // core functionality
         raceResultService.addSubscriber(categoryA, clientA);
         raceResultService.addSubscriber(categoryA, clientB);
-        raceResultService.send(categoryA, messageA);
+
+        for (int loopIndex = messagesNumber; loopIndex > 0; loopIndex--) {
+            raceResultService.send(categoryA, messageA);
+        }
 
         // verify interactions
-        Mockito.verify(clientA).receive(messageA);
-        Mockito.verify(clientB).receive(messageA);
-        Mockito.verify(logger, Mockito.times(2)).log(messageA);
+        Mockito.verify(clientA, Mockito.times(messagesNumber)).receive(messageA);
+        Mockito.verify(clientB, Mockito.times(messagesNumber)).receive(messageA);
+        Mockito.verify(logger, Mockito.times(2 * messagesNumber)).log(messageA);
     }
 
     /**
      * Verifies that even multiple subscribes result in only one received message
      */
     @Test
-    public void severalSubscribesOfSameClientShouldResultInOneReceivedMessage() {
+    @Parameters(method = "getCountsOfMethodInvocation")
+    public void severalSubscribesOfSameClientShouldResultInOneReceivedMessage(int messagesNumber) {
         // core functionality
         raceResultService.addSubscriber(categoryA, clientA);
         raceResultService.addSubscriber(categoryA, clientA);
-        raceResultService.send(categoryA, messageA);
+
+        for (int loopIndex = messagesNumber; loopIndex > 0; loopIndex--) {
+            raceResultService.send(categoryA, messageA);
+        }
 
         // verify interactions
-        Mockito.verify(clientA).receive(messageA);
-        Mockito.verify(logger).log(messageA);
+        Mockito.verify(clientA, Mockito.times(messagesNumber)).receive(messageA);
+        Mockito.verify(logger, Mockito.times(messagesNumber)).log(messageA);
     }
 
     /**
      * Verifies that once removed client should not receive any messages
      */
     @Test
-    public void removedSubscriberShouldStopReceiveMessages() {
+    @Parameters(method = "getCountsOfMethodInvocation")
+    public void removedSubscriberShouldStopReceiveMessages(int messagesNumber) {
         // core functionality
         raceResultService.addSubscriber(categoryA, clientA);
         raceResultService.removeSubscriber(categoryA, clientA);
-        raceResultService.send(categoryA, messageA);
+
+        for (int loopIndex = messagesNumber; loopIndex > 0; loopIndex--) {
+            raceResultService.send(categoryA, messageA);
+        }
 
         // verify interactions
         Mockito.verify(clientA, Mockito.never()).receive(messageA);
@@ -112,9 +145,13 @@ public class RaceResultServiceTest {
      * subscribed for
      */
     @Test
-    public void subscribedClientShouldReceiveOnlyMessageForChosenCategory() {
+    @Parameters(method = "getCountsOfMethodInvocation")
+    public void subscribedClientShouldReceiveOnlyMessageForChosenCategory(int messagesNumber) {
         raceResultService.addSubscriber(categoryA, clientA);
-        raceResultService.send(categoryB, messageA);
+
+        for (int loopIndex = messagesNumber; loopIndex > 0; loopIndex--) {
+            raceResultService.send(categoryB, messageA);
+        }
 
         Mockito.verify(clientA, Mockito.never()).receive(messageA);
         Mockito.verify(logger, Mockito.never()).log(messageA);
@@ -125,33 +162,41 @@ public class RaceResultServiceTest {
      * he has chosen to receive them
      */
     @Test
-    public void subscribedClientShouldReceiveMessagesFromSeveralSubscribedCategories() {
+    @Parameters(method = "getCountsOfMethodInvocation")
+    public void subscribedClientShouldReceiveMessagesFromSeveralSubscribedCategories(int messagesNumber) {
         raceResultService.addSubscriber(categoryA, clientA);
         raceResultService.addSubscriber(categoryB, clientA);
-        raceResultService.send(categoryA, messageA);
-        raceResultService.send(categoryB, messageB);
 
-        Mockito.verify(clientA).receive(messageA);
-        Mockito.verify(clientA).receive(messageB);
-        Mockito.verify(logger).log(messageA);
-        Mockito.verify(logger).log(messageB);
+        for (int loopIndex = messagesNumber; loopIndex > 0; loopIndex--) {
+            raceResultService.send(categoryA, messageA);
+            raceResultService.send(categoryB, messageB);
+        }
+
+        Mockito.verify(clientA, Mockito.times(messagesNumber)).receive(messageA);
+        Mockito.verify(clientA, Mockito.times(messagesNumber)).receive(messageB);
+        Mockito.verify(logger, Mockito.times(messagesNumber)).log(messageA);
+        Mockito.verify(logger, Mockito.times(messagesNumber)).log(messageB);
     }
 
     /**
      * Verifies that several subscribers receive only chosen messages
      */
     @Test
-    public void severalSubscribersReceiveMessageFromChosenCategories() {
+    @Parameters(method = "getCountsOfMethodInvocation")
+    public void severalSubscribersReceiveMessageFromChosenCategories(int messagesNumber) {
         raceResultService.addSubscriber(categoryA, clientA);
         raceResultService.addSubscriber(categoryA, clientB);
         raceResultService.addSubscriber(categoryB, clientB);
-        raceResultService.send(categoryA, messageA);
-        raceResultService.send(categoryB, messageB);
 
-        Mockito.verify(clientA).receive(messageA);
-        Mockito.verify(clientB).receive(messageA);
-        Mockito.verify(clientB).receive(messageB);
-        Mockito.verify(logger, Mockito.times(2)).log(messageA);
-        Mockito.verify(logger).log(messageB);
+        for (int loopIndex = messagesNumber; loopIndex > 0; loopIndex--) {
+            raceResultService.send(categoryA, messageA);
+            raceResultService.send(categoryB, messageB);
+        }
+
+        Mockito.verify(clientA, Mockito.times(messagesNumber)).receive(messageA);
+        Mockito.verify(clientB, Mockito.times(messagesNumber)).receive(messageA);
+        Mockito.verify(clientB, Mockito.times(messagesNumber)).receive(messageB);
+        Mockito.verify(logger, Mockito.times(2 * messagesNumber)).log(messageA);
+        Mockito.verify(logger, Mockito.times(messagesNumber)).log(messageB);
     }
 }
