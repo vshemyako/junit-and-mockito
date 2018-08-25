@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.time.DayOfWeek;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -81,7 +82,7 @@ public class ClassroomServiceTest {
      */
     @Test
     public void shouldAllowToBookClassroomByName() {
-        boolean booked = classroomService.bookByName(A1_CLASSROOM);
+        boolean booked = classroomService.bookByName(A1_CLASSROOM, DayOfWeek.MONDAY);
         Assert.assertTrue("Failed to book chosen classroom by name", booked);
     }
 
@@ -89,9 +90,9 @@ public class ClassroomServiceTest {
      * Verifies that the same classroom cannot be booked twice
      */
     @Test
-    public void shouldFailedToBookTheSameClassroomByNameTwice() {
-        classroomService.bookByName(A1_CLASSROOM);
-        boolean booked = classroomService.bookByName(A1_CLASSROOM);
+    public void shouldFailedToBookTheSameClassroomTwice() {
+        classroomService.bookByName(A1_CLASSROOM, DayOfWeek.MONDAY);
+        boolean booked = classroomService.bookByName(A1_CLASSROOM, DayOfWeek.MONDAY);
 
         Assert.assertFalse("It should be impossible to book the same room twice", booked);
     }
@@ -101,7 +102,7 @@ public class ClassroomServiceTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionInCaseNoExistingClassroomWasBooked() {
-        classroomService.bookByName(A4_CLASSROOM);
+        classroomService.bookByName(A4_CLASSROOM, DayOfWeek.MONDAY);
     }
 
     /**
@@ -109,7 +110,18 @@ public class ClassroomServiceTest {
      */
     @Test
     public void shouldAllowToBookClassroomWithSpecifiedEquipment() {
-        classroomService.bookByEquipment(Equipment.PROJECTOR);
+        classroomService.bookByEquipment(Equipment.PROJECTOR, DayOfWeek.MONDAY);
+    }
+
+    /**
+     * Asserts that it's impossible to book a classroom with the same equipment twice
+     */
+    @Test
+    public void shouldFailedToBookTheSameClassroomByEquipmentTwice() {
+        classroomService.bookByEquipment(Equipment.MICROPHONE, DayOfWeek.MONDAY);
+        boolean booked = classroomService.bookByEquipment(Equipment.MICROPHONE, DayOfWeek.MONDAY);
+
+        Assert.assertFalse("It should be impossible to book the same room twice", booked);
     }
 
     /**

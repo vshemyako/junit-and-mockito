@@ -1,21 +1,26 @@
 package tdd.classroom;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ClassroomService {
 
     private List<Classroom> classrooms;
-    private List<Classroom> bookedClassrooms;
+    private Map<Classroom, List<DayOfWeek>> classroomToBookedDays;
 
     public ClassroomService(List<Classroom> classrooms) {
         if (classrooms == null || classrooms.isEmpty()) {
             throw new IllegalArgumentException("Service have to serve classrooms: null / empty parameter is forbidden");
         }
         this.classrooms = classrooms;
-        this.bookedClassrooms = new ArrayList<>();
+        this.classroomToBookedDays = classrooms
+                .stream()
+                .collect(Collectors.toMap(Function.identity(), room -> new ArrayList<>()));
     }
 
     /**
@@ -30,29 +35,31 @@ public class ClassroomService {
      * Books a classroom chosen by {@code classroomName}
      *
      * @param classroomName - name of a classroom to choose
+     * @param dayOfWeek     - desired day of the week to book
      * @return true in case classroom was successfully booked
      */
-    public boolean bookByName(String classroomName) {
+    public boolean bookByName(String classroomName, DayOfWeek dayOfWeek) {
         Classroom classroomToBook = getByName(classroomName);
-        return bookClassroom(classroomToBook);
+        return bookClassroom(classroomToBook, dayOfWeek);
     }
 
     /**
      * Books a classroom chosen by {@code classroomName} and specified
      * {@code equipment}
      */
-    public boolean bookByEquipment(Equipment equipment) {
+    public boolean bookByEquipment(Equipment equipment, DayOfWeek dayOfWeek) {
         Classroom classroomToBook = getByEquipment(equipment);
-        return bookClassroom(classroomToBook);
+        return bookClassroom(classroomToBook, dayOfWeek);
     }
 
     /**
      * Adds chosen classroom to a list of booked classrooms if this classroom
      * wasn't previously booked
      */
-    private boolean bookClassroom(Classroom classroomToBook) {
-        boolean alreadyBooked = bookedClassrooms.contains(classroomToBook);
-        return alreadyBooked ? false : bookedClassrooms.add(classroomToBook);
+    private boolean bookClassroom(Classroom classroomToBook, DayOfWeek dayToBook) {
+        List<DayOfWeek> bookedDays = classroomToBookedDays.get(classroomToBook);
+        boolean alreadyBooked = bookedDays.contains(dayToBook);
+        return !alreadyBooked && bookedDays.add(dayToBook);
     }
 
     /**
