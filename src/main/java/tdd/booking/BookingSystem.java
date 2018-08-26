@@ -43,23 +43,25 @@ public class BookingSystem {
     public boolean bookPeriod(BookingPeriod bookingPeriod) {
         // cheap verification -> using hash value
         boolean isBooked = bookedPeriods.contains(bookingPeriod);
-        if (!isBooked) {
-            // verify if it doesn't overlap
-            boolean isPeriodOverlapping = isPeriodOverlapping(bookingPeriod);
-            if (!isPeriodOverlapping) {
-                // add period
-                isBooked = bookedPeriods.add(bookingPeriod);
-            }
+        if (isBooked) {
+            return false;
         }
-        return isBooked;
+
+        boolean added = false;
+        // verify if it doesn't overlap
+        if (!isPeriodOverlapping(bookingPeriod)) {
+            // add period
+            added = bookedPeriods.add(bookingPeriod);
+        }
+        return added;
     }
 
     private boolean isPeriodOverlapping(BookingPeriod toBook) {
         boolean isOverlapping = false;
-        for(BookingPeriod wasBooked : bookedPeriods) {
+        for (BookingPeriod wasBooked : bookedPeriods) {
             isOverlapping = toBook.getFrom().isBefore(wasBooked.getTo())
                     && toBook.getTo().isAfter(wasBooked.getFrom());
-            if(isOverlapping) {
+            if (isOverlapping) {
                 break;
             }
         }
