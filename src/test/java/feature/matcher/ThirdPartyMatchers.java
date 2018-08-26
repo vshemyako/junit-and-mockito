@@ -2,6 +2,7 @@ package feature.matcher;
 
 import org.fest.assertions.Assertions;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
